@@ -27,12 +27,12 @@ public class UserRegistry {
     }
 
     public void registerUser(String username, long chatId) {
-        userMap.put(username.toLowerCase(), chatId);
+        userMap.put(username, chatId);
         saveToFile();
     }
 
     public Long getChatId(String username) {
-        return userMap.get(username.toLowerCase());
+        return userMap.get(username);
     }
 
     private synchronized void saveToFile() {
