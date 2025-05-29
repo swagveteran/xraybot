@@ -74,7 +74,7 @@ public class NotifyBot extends TelegramLongPollingBot {
                             return;
                         }
 
-                        XrayApiService.Client client = xrayApiService.getClientTraffic(username.toLowerCase());
+                        XrayApiService.Client client = xrayApiService.getClientTraffic(username);
 
                         if (client == null) {
                             sendMessage(chatId, "Клиент с именем " + username + " не найден.");

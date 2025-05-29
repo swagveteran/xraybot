@@ -5,6 +5,7 @@ import com.xraybot.service.XrayApiService;
 import com.xraybot.service.XrayApiService.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,8 +21,6 @@ public class NotificationScheduler {
     private final XrayApiService xrayApiService;
     private final UserRegistry userRegistry;
     private final AbsSender bot;
-
-    // В зависимости от конфигурации 3X-UI может быть несколько inbound'ов — здесь укажи нужный ID
     private final int inboundId = 2;
 
     public NotificationScheduler(XrayApiService xrayApiService,
@@ -32,10 +31,7 @@ public class NotificationScheduler {
         this.bot = bot;
     }
 
-    /**
-     * Планировщик запускается каждый день в 9:00 утра по серверному времени
-     */
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "${xray.cron.expiry-check}")
     public void sendExpiryNotifications() {
         log.info("Выполняется проверка клиентов на окончание срока действия...");
 
@@ -60,7 +56,7 @@ public class NotificationScheduler {
                 long daysLeft = secondsLeft / (60 * 60 * 24);
 
                 if (daysLeft <= 2) {
-                    String email = client.email().toLowerCase();
+                    String email = client.email();
                     Long chatId = userRegistry.getChatId(email);
 
                     if (chatId != null) {
